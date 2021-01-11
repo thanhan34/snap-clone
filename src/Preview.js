@@ -15,7 +15,9 @@ import { v4 as uuid } from 'uuid'
 import { db, storage } from "./firebase"
 import firebase from 'firebase'
 import './Preview.css'
+import { selectUser } from './features/appSlice';
 function Preview() {
+    const user = useSelector(selectUser)
     const cameraImage = useSelector(selectCameraImage)
     const dispatch = useDispatch()
     const history = useHistory()
@@ -41,9 +43,9 @@ function Preview() {
             storage.ref('posts').child(id).getDownloadURL().then((url) => {
                 db.collection('posts').add({
                     imageUrl: url,
-                    username: 'An Doan',
+                    username: user.username,
                     read: false,
-                    // profilePic: 
+                    profilePic: user.profilePic,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 })
                 history.replace('/chats')
@@ -63,7 +65,7 @@ function Preview() {
                 <TimerIcon />
             </div>
             <img src={cameraImage} alt="preview" />
-            <div className="preview__footer" onClick={sendPost()}>
+            <div className="preview__footer" onClick={sendPost}>
                 <h2>Send Now</h2>
                 <SendIcon fontSize="small" className="preview__sendIcon" />
             </div>
